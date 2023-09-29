@@ -3,7 +3,7 @@ name: Deploy Golang Backend Application to Github
 on:
   push:
     branches:
-      - "main"
+      - "master"
 
 jobs:
   deploy:
