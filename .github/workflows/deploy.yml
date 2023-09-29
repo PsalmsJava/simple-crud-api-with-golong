@@ -1,0 +1,54 @@
+name: Deploy Golang Backend Application to Github
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      -name: Checkout Code
+      -action: checkout/@v3
+    
+      -name: Setup Golang
+      -action: action/setup-go/@v3
+      -with:
+        go-version: 1.19
+
+      -name: Build Backend Application
+      -run: |
+        go get -v -t -d ./...
+        go build -v -o simple-crud-application-with-golong
+      
+
+      -name: Create and Checkout 'gh-pages' Branch
+      run: |
+        git checkout --orphan gh-pages
+        git reset --hard
+        git commit --allow-empty -m "Initial commit"
+        git push origin gh-pages --force
+
+    - name: Copy Built Files to 'gh-pages' Branch
+      run: |
+        # Copy your built files and static assets to the gh-pages branch directory.
+        # Replace 'public' with your actual directory containing the built files.
+        cp -r public/* .
+
+    - name: Push to 'gh-pages' Branch
+      run: |
+        git config user.name "PsalmsJava"
+        git config user.email "inyangpsalms@gmail.com"
+        git add .
+        git commit -m "Deployed via GitHub Actions"
+        git push origin gh-pages
+
+    - name: Clean up
+      run: |
+        git checkout main  # Switch back to the main branch
+        git branch -D gh-pages  # Delete the local 'gh-pages' branch 
+
+
+
